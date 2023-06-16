@@ -1,0 +1,6 @@
+push.sh
+*.o
+a.out
+bin/*
+**/dist-newstyle/*
+

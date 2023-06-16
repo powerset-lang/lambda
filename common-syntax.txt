@@ -1,0 +1,44 @@
+Syntax:
+
+(sexp shasdfla alsdkf (asd
+    (sladf asdlf)))
+
+    #;Line comments
+    #; like this
+
+ #![ internal directive]
+ #![internal (subdir directive)]
+
+#[ external directive   ]
+
+#(commented (out
+    s-expression (which
+        #(can be (nested)))))
+
+#| Block comment, which can #|also|# be nested#||#   |#
+
+#|Any code can be commented out by a block comment or a commented sexp.
+(this includes if #(you are dumb and #; )))))) #| #| #| #|#|#| have a line comment
+    containing comment delimiters) #; which are thereby ignored. #( #( #(#(
+    So don) #; 't do that.
+ Also, block comments can hold unbalanced sexp delims #(#(#( ... etc. Syntax not cked. |#
+
+Differences between block comments and commented-sexprs:
+- Commented sexprs are still lexed, intended to be valid code. OTOH, block comments are fully free-for-all, save for line comment introductions, line endings, begin and end block delimiters.
+- Similarly but more simply, line commments are anything-goes except a newline (or other vertical whitespace).
+
+State machine for block comments:
+upon seeing #| tok:
+    while true:
+        if find a #; :
+            scan till eol
+        if find a #| tok:
+            recursive call to self
+        if find a |# tok:
+            return
+
+Ident: any a-z, A-Z, -, _, and non-initial 0-9, ' sequence.
+
+When need is demonstrated, add numbers and strings.
+
+
