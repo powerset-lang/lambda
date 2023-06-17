@@ -31,7 +31,9 @@ executable untyped
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
     build-depends:
-        base ^>=4.17
+        array,
+        base ^>=4.17,
+        bytestring
     
     build-tool-depends:
         alex:alex,
