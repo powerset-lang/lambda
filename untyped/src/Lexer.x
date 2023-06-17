@@ -3,7 +3,8 @@
 
 -- Haskell code copied verbatim into the top of the output lexer
 {
--- any language pragmas
+{-# LANGUAGE OverloadedStrings #-}
+    
 module Lexer 
     ( Alex
     , AlexPosn (..)
@@ -38,7 +39,7 @@ untyped :-
 -- Everywhere: Skip whitespace
 $white+ ;
 
-@id { tokId }
+@ident { tokId }
 
 -- End rules; More Haskell code copied verbatim, supporting functions and types
 {
@@ -107,10 +108,11 @@ tokId inp@(_, _, str, _) len = pure RangedToken
 -- Temp: a small function for testing
 scanMany :: ByteString -> Either String [RangedToken]
 scanMany input = runAlex input go
-    where go = do
-        output <- alexMonadScan
-        if rtToken output == EOF 
-            then pure [output] 
-            else (output :) <$> go
+    where 
+        go = do
+            output <- alexMonadScan
+            if rtToken output == EOF 
+                then pure [output] 
+                else (output :) <$> go
 
 }
