@@ -19,40 +19,37 @@ import Ast
 -- Happy settings
 %name parseUntyped -- Name of generated parsing function
 %expect 0 -- No intentional Shift/Reduce conflicts.
-%monad { L.Alex } { >>= } { Pure }
+%monad { L.Alex } { >>= } { pure } -- Todo: Use custom monad instead of alex's?
 %lexer { lexer } { L.RangedToken L.EOF _ }
 %error { parseError }
 %tokentype { L.RangedToken }
 
 %token
     IDENT { L.RangedToken (L.Ident _) _ }
-    LAMBDA { L.RangedToken L.Lambda _ }
-    DOT { L.RangedToken L.Dot _ }
-    LPAR { L.RangedToken L.LPar _ }
-    RPAR { L.RangedToken L.RPar _ }
+    '\\' { L.RangedToken L.Lambda _ }
+    '.' { L.RangedToken L.Dot _ }
+    '(' { L.RangedToken L.LPar _ }
+    ')' { L.RangedToken L.RPar _ }
     
 
 -- Begin rules section
 %%
 
 exp :: { Exp L.Range }
-    : LAMBDA var DOT exp { EAbs $2 $4 } --todo
+    : '\\' var '.' exp { EAbs (L.rtRange $1 <-> getRange $4) $2 $4 }
     | appExp { $1 }
 
--- Happens first, so higher precedence
 appExp :: { Exp L.Range }
     : simpleExp { $1 }
-    | appExp simpleExp { EApp (info $1 <-> info $2) $1 $2 }
+    | appExp simpleExp { EApp (getRange $1 <-> getRange $2) $1 $2 }
 
 simpleExp :: { Exp L.Range }
-    : var { $1 }
-    | '(' exp ')' {  }
+    : var { EVar (getRange $1) $1 }
+    | '(' exp ')' { $2 } -- todo expand range?
 
 var :: { Name L.Range }
     : IDENT { unTok $1 (\range (L.Ident name) -> Name range name) }
 
-emptyParens : LPAR RPAR ;
-emptyString : ;
 
 -- End Rules section, begin supporting datatypes and functions
 {
@@ -69,17 +66,10 @@ lexer = (=<< L.alexMonadScan)
 unTok :: L.RangedToken -> (L.Range -> L.Token -> a) -> a
 unTok (L.RangedToken tok range) ctor = ctor range tok
 
--- Todo: make it a typeclass that is implemented for the AST and extracts field
--- Unsafe extraction of metadata
-info :: Foldable f => f a -> a
-info = fromJust . getFirst . foldMap pure
-
--- Concatenate two ranges. 
--- Todo: LHS range must start before RHS range! Add check.
+-- Concatenate two ranges.
 (<->) :: L.Range -> L.Range -> L.Range
-L.Range a1 _ <-> L.Range _ a2 = L.Range a1 b2
-
-
+L.Range a1 _ <-> L.Range _ b2 = if a1 < b2 then L.Range a1 b2 
+    else error $ "Invalid range concatenation " <> show a1 <> "<->" <> show b2
 
 
 }
