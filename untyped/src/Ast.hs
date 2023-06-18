@@ -4,6 +4,7 @@
 {-# LANGUAGE InstanceSigs #-}
 
 module Ast where
+
 import Data.ByteString.Lazy.Char8 (ByteString)
 
 data Name a
@@ -29,10 +30,3 @@ instance Ranged Name where
     getRange :: Name a -> a
     getRange (Name r _) = r
 
--- getRangeExp :: Exp a -> a
--- getRangeExp (EAbs r _ _) = r
--- getRangeExp (EApp r _ _) = r
--- getRangeExp (EVar r _) = r
-
--- getRangeName :: Name a -> a
--- getRangeName (Name r _) = r

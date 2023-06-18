@@ -17,7 +17,7 @@ import Ast
 }
 
 -- Happy settings
-%name parseUntyped -- Name of generated parsing function
+%name parseUntyped exp -- Name of generated parsing function
 %expect 0 -- No intentional Shift/Reduce conflicts.
 %monad { L.Alex } { >>= } { pure } -- Todo: Use custom monad instead of alex's?
 %lexer { lexer } { L.RangedToken L.EOF _ }

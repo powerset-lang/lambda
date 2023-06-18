@@ -161,8 +161,6 @@ unNestComment input len = do
     put state{commentNestLevel = level}
     when (level == 0) $ 
         alexSetStartCode 0
-    skip input len 
-
-
+    skip input len
 
 }

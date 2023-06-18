@@ -15,4 +15,4 @@ main = do
     -- print (L.scanMany "ab \\x.x x dsf' identtt  )(")
     --print (L.scanMany "ab \\x.x x /* dsf'*/ /*/**/*/ ide.--nttt  )(")
     print (L.runAlex "\\x.x x" P.parseUntyped)
-    print (L.runAlex "\\x.x (\\yz . y (yz x))/**/ " P.parseUntyped)
+    print (L.runAlex "\\x.x (\\yz . y (yz x))/**/ (x)" P.parseUntyped)
